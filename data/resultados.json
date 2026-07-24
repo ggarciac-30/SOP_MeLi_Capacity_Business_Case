@@ -20,7 +20,7 @@
     {
       "numero": 2,
       "pregunta": "¿Cuál es tu pico de ocupación en M3 proyectada? ¿Por qué?",
-      "respuesta": "BD_1 (histórico) y BD_2 (forecast) son tramos consecutivos de una misma serie, no bases a unir por fecha coincidente. Se derivó un factor de densidad (m³/unidad) del histórico y se aplicó al forecast de stock de BD_2 para proyectar el volumen requerido en julio. El faltante crece de forma sostenida (no es un pico puntual) porque el stock de BD_2 tiene tendencia creciente constante (+52% en 30 días) mientras la capacidad no la tiene — el pico dentro del horizonte analizado es el último día disponible, 25-julio.",
+      "respuesta": "Dado el forecast en BD_2 y con BD_1, se calculó un factor de densidad promedio (m³/unidad), el cual se aplicó al stock proyectado de BD_2 para estimar el volumen requerido durante julio.\n\nEl análisis muestra que el déficit de capacidad no corresponde a un pico puntual, sino a una tendencia creciente sostenida: el stock proyectado de BD_2 aumenta aproximadamente +52% en 30 días, mientras que la capacidad disponible permanece sin crecimiento. Por esta razón, el mayor nivel de ocupación dentro del horizonte analizado se alcanza el 25-jul, último día de la proyección.",
       "tabla": {
         "titulo": "Sensibilidad — escenarios de capacidad",
         "encabezados": ["Escenario", "Capacidad", "Inicio de déficit", "Faltante al 25-jul"],
