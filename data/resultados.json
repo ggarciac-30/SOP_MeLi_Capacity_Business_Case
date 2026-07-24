@@ -30,7 +30,7 @@
           ["Optimista", "4,251 m³", "16-julio-2026", "+929 m³"]
         ]
       },
-      "nota": "Recomendación: usar el escenario conservador (3,780 m³) como caso base. Ventana de acción de ~2 semanas desde el cierre del histórico hasta el inicio del déficit (10-jul)."
+      "nota": "Se recomienda usar el escenario conservador como caso base (3,780 m³), ya que nos da una ventana de acción de ~2 semanas antes del inicio del déficit proyectado el 10-jul."
     },
     {
       "numero": 3,
@@ -47,7 +47,7 @@
         { "valor": "50.10 u/h", "etiqueta": "Método B (razón de totales — reportado)" },
         { "valor": "~0.7%", "etiqueta": "Diferencia entre métodos" }
       ],
-      "respuesta": "Productividad = Unidades vendidas (Venta) ÷ Horas Hombre Packing, calculada de dos formas para validar consistencia. Respuesta: ~50.1 unidades/hora-hombre. La cercanía entre ambos métodos (diferencia menor a 1%) indica que la productividad histórica es estable día a día, sin outliers que la distorsionen."
+      "respuesta": "La productividad de packing se calculó como la relación entre las unidades vendidas (Venta) y las Horas Hombre de Packing mediante dos enfoques: (A) el promedio de las productividades diarias y (B) la razón entre las ventas totales y las horas-hombre totales del periodo. Ambos métodos arrojaron resultados muy similares (50.48 vs. 50.10 unidades por hora-hombre), con una diferencia menor al 1%, lo que indica que la productividad histórica es consistente y que el método de cálculo no afecta de forma significativa la estimación."
     },
     {
       "numero": 5,
@@ -57,14 +57,14 @@
         { "valor": "48 hrs", "etiqueta": "Supuesto: jornada semanal por persona" },
         { "valor": "4 personas", "etiqueta": "Headcount necesario" }
       ],
-      "respuesta": "WK29 corresponde al 13-19 de julio de 2026 (numeración de semana ISO, confirmada contra la columna Week Sum del histórico). El forecast de venta (SES) proyecta 1,339 unidades/día constantes para toda la semana. Horas-hombre necesarias = Volumen semanal (1,339 × 7 = 9,373 unidades) ÷ Productividad (50.10 u/h) = 187.1 horas-hombre.",
-      "nota": "Supuesto declarado: jornada semanal de 48 horas por persona (esquema estándar en México). Redondeo hacia arriba (ceil), estándar en dimensionamiento de capacidad para no quedar corto ante el pico."
+      "respuesta": "WK29 corresponde al periodo del 13 al 19 de julio de 2026. Para esta semana, el forecast de ventas (SES) estima un volumen constante de 1,339 unidades diarias, equivalente a 9,373 unidades semanales. Considerando una productividad histórica de 50.10 unidades por hora, se requieren aproximadamente 187.1 horas-hombre para cubrir la demanda proyectada.",
+      "nota": "Supuesto: Tomando una jornada semanal de 48 horas por persona (estándar en México)."
     },
     {
       "numero": 6,
       "pregunta": "¿Consideras que la productividad histórica se puede mantener a lo largo del tiempo? Sí, no ¿Por qué?",
       "respuesta": "Sí, en el corto plazo (horizonte de julio 2026), con reservas. La evidencia de la Pregunta 4 (diferencia menor a 1% entre Método A y B) muestra que la productividad no tiene outliers diarios ni volatilidad relevante durante el periodo histórico observado — es un proceso estable. Sin embargo, esta estabilidad se validó solo contra el histórico de 30 días; no incorpora el efecto del crecimiento de stock identificado en la Pregunta 3. Si el volumen a procesar crece de forma sostenida sin una inversión proporcional en staffing/mesas, es razonable esperar fatiga operativa o saturación que reduzca la productividad marginal — riesgo a monitorear, no un hecho confirmado con los datos actuales.",
-      "nota": "Recomendación: dar seguimiento semanal a la productividad real vs. el supuesto de 50.1 u/h conforme se acerque el pico de julio, para detectar desviaciones tempranamente."
+      "nota": "Recomendación: Dar seguimiento semanal a la productividad real vs. el supuesto de 50.1 u/h conforme se acerque el pico de julio, para detectar desviaciones tempranamente."
     },
     {
       "numero": 7,
@@ -74,7 +74,7 @@
         { "valor": "690 u/día", "etiqueta": "Volumen pico prorrateado" },
         { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
       ],
-      "respuesta": "El dataset no incluye clasificación de tamaño de producto ni capacidad de mesa — se declaran dos supuestos: (1) corte en la mediana del volumen unitario (~0.026 m³) para clasificar Pequeño/Grande, con un mix histórico resultante de 51.5% Pequeño; y (2) la productividad histórica (50.1 u/h) aplica por igual a ambos tamaños, con turno de 8 horas por mesa. El volumen pico de WK29 (1,339 u/día) prorrateado por el mix da 690 u/día para Pequeño."
+      "respuesta": "Dado que el dataset no incluye una clasificación por tamaño de producto ni la capacidad de las mesas de packing, fue necesario establecer dos supuestos para estimar el staffing. Primero, los productos se clasificaron como Pequeños o Grandes utilizando la mediana del volumen unitario (0.026 m³), obteniendo un mix histórico de 51.5% para productos Pequeños. Segundo, se asumió que la productividad histórica de packing (50.1 unidades/hora) es la misma para ambos tamaños y que cada mesa opera en turnos de 8 horas. Bajo estos supuestos, el volumen proyectado para la WK29 (1,339 unidades por día) equivale aproximadamente a 690 unidades diarias de productos Pequeños."
     },
     {
       "numero": 8,
@@ -84,22 +84,21 @@
         { "valor": "649 u/día", "etiqueta": "Volumen pico prorrateado" },
         { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
       ],
-      "respuesta": "Con el mismo mix histórico (48.5% Grande) aplicado al volumen pico de WK29 (1,339 u/día), el volumen prorrateado para Grande es 649 u/día — que dividido entre el throughput por mesa (400.8 u/día) da igualmente 2 mesas.",
-      "nota": "Nota de sensibilidad: ambos resultados (1.72 y 1.62 antes de redondear) están cerca del límite entre 1 y 2 mesas. Con un turno de 10h en vez de 8h, el resultado bajaría a 1 mesa por categoría — el redondeo hacia arriba es intencionalmente conservador."
+      "respuesta": "Aplicando el mismo mix histórico (48.5% de productos Grandes) al volumen proyectado para la WK29 (1,339 unidades por día), se estiman aproximadamente 649 unidades diarias de esta categoría. Considerando una capacidad de 400.8 unidades por mesa en un turno de 8 horas, se requieren 2 mesas para atender el volumen proyectado.",
+      "nota": "El cálculo se realizó bajo el supuesto de turnos de 8 horas. Aunque el requerimiento estimado se encuentra cercano al límite entre 1 y 2 mesas, se adoptó un redondeo conservador para evitar riesgos de saturación ante variaciones en la demanda o en la productividad."
     }
   ],
 
   "conclusiones": [
-    "El FC MXXX1 presenta una reducción no explicada de capacidad instalada del 16%, detectada al validar el supuesto de ocupación constante contra los datos históricos.",
-    "Sin intervención, el faltante de espacio inicia el 10 de julio de 2026 y crece de forma sostenida durante el resto del mes.",
-    "La causa del crecimiento de stock no es un aumento general de demanda — la venta proyectada se mantiene plana — sino una acumulación concentrada en categorías específicas de bajo giro."
-  ],
+    "El FC MXXX1 muestra una reducción del 16% en la capacidad disponible respecto al inicio del periodo histórico, sin una causa identificable con la información disponible.",
+    "De mantenerse las condiciones actuales, el déficit de capacidad comenzará el 10 de julio y aumentará de forma gradual durante el resto del mes.",
+    "El crecimiento del inventario proyectado no responde a un incremento en la demanda, sino a una acumulación de stock en categorías específicas de baja rotación."
+],
 
   "recomendaciones": [
-    "Validar con el equipo de Warehouse Operations la causa de la caída de capacidad detectada a partir del 9-10 de junio.",
-    "Iniciar gestión de capacidad adicional (renta de espacio, redistribución de SKUs) con al menos 2 semanas de anticipación al 10 de julio.",
-    "Revisar con Compras/Comercial las categorías de menor rotación para evaluar sobre-compra, descontinuación o estacionalidad.",
-    "Confirmar la cifra oficial de capacidad instalada de catálogo del FC contra la cifra derivada de los datos disponibles.",
-    "Contratar/reasignar 4 personas para cubrir WK29, con monitoreo semanal de productividad real."
-  ]
+    "Validar con la causa de la reducción de capacidad observada a partir del 10 de junio.",
+    "Planificar acciones para incrementar la capacidad disponible antes del 10 de julio, ya sea mediante redistribución de inventario o habilitación de espacio adicional.",
+    "Revisar con Compras y Comercial las categorías de baja rotación para identificar oportunidades de reducir la acumulación de inventario.",
+    "Confirmar la capacidad instalada oficial del FC y compararla con la capacidad implícita estimada en el análisis."
+]
 }
