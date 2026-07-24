@@ -6,21 +6,21 @@
   "analisis": [
     {
       "numero": 1,
-      "pregunta": "¿Cuál es tu capacidad de almacenaje promedio histórica en M3?",
+      "pregunta": "¿Cuál es tu capacidad de almacenaje promedio histórica en m³?",
       "kpis": [
         { "valor": "3,406 m³", "etiqueta": "Volumen ocupado promedio histórico" },
         { "valor": "4,251 m³", "etiqueta": "Capacidad instalada implícita (promedio)" },
         { "valor": "~5.1%", "etiqueta": "Coef. de variación de capacidad implícita", "tipo": "alerta" }
       ],
       
-      "respuesta": "Para estimar la capacidad de almacenamiento histórica, se calculó el volumen ocupado (m³) de cada ITEM a partir de sus dimensiones y stock diario, agregándolo a nivel almacén-día para el periodo del 27-may al 25-jun-2026. Al validar el supuesto de una capacidad constante, se identificaron dos regímenes operativos: una capacidad estable de 4,300–4,540 m³ hasta el 9-jun, seguida de una reducción sostenida hasta 3,780 m³ (-16%) a partir del 10-jun.",
+      "respuesta": "Para entender nuestra capacidad real, aplicamos ingeniería inversa, ya que la base de datos no nos entregaba el volumen total del almacén. Primero calculamos el volumen físico de los SKU [(Largo x Ancho x Alto) / 1,000,000] y lo multiplicamos por el stock diario. Al dividir esos metros cúbicos ocupados entre el porcentaje de ocupación reportado diariamente, descubrimos que el promedio histórico es de 4,251 m³. Sin embargo, la gráfica de datos revela que a partir del 10 de junio sufrimos una caída sostenida del 16% en espacio disponible, estabilizándose en 3,780 m³.",
       "imagen": "images/capacidad_instalada.png",
-      "nota": "Podriamos inferir que, la reducción de capacidad implícita se debe a restricciones operativas (bloqueo de racks, mantenimiento o reconfiguración)."
+      "nota": "Para evitar colapsos, toda la planeación operativa debe hacerse sobre este escenario conservador (3,780 m³), mientras se hace investigación y recuperación de ese espacio bloqueado por causas desconocidas."
     },
     {
       "numero": 2,
-      "pregunta": "¿Cuál es tu pico de ocupación en M3 proyectada? ¿Por qué?",
-      "respuesta": "Dado el forecast en BD_2 y con BD_1, se calculó un factor de densidad promedio (m³/unidad), el cual se aplicó al stock proyectado de BD_2 para estimar el volumen requerido durante julio.\n\nEl análisis muestra que el déficit de capacidad no corresponde a un pico puntual, sino a una tendencia creciente sostenida: el stock proyectado de BD_2 aumenta aproximadamente +52% en 30 días, mientras que la capacidad disponible permanece sin crecimiento. Por esta razón, el mayor nivel de ocupación dentro del horizonte analizado se alcanza el 25-jul, último día de la proyección.",
+      "pregunta": "¿Cuál es tu pico de ocupación en m³ proyectada? ¿Por qué?",
+      "respuesta": "Sabiendo que nuestra capacidad física está restringida a 3,780 m³, proyectamos el espacio requerido para julio multiplicando el forecast de unidades entrantes por el factor de densidad (m³/unidad promedio del almacén). Los datos no muestran un pico estacional rápido, sino un crecimiento de stock ininterrumpido. Bajo estos parámetros, entraremos en déficit sostenido a partir del 10 de julio, cerrando el mes con un faltante crítico de 1,400 m³. Operativamente, esto nos deja con una ventana de apenas dos semanas para habilitar espacio de overflow o frenar el ingreso de mercancía.",
       "tabla": {
         "titulo": "Sensibilidad — escenarios de capacidad",
         "encabezados": ["Escenario", "Capacidad", "Inicio de déficit", "Faltante al 25-jul"],
@@ -35,9 +35,9 @@
     {
       "numero": 3,
       "pregunta": "¿Qué insights tienes de la ocupación proyectada?",
-      "respuesta": "El forecast de venta (modelo ganador: Suavización Exponencial Simple) proyecta una línea prácticamente plana de ~1,339 unidades/día para todo julio, sin tendencia. En contraste, el forecast de stock de BD_2 crece sostenidamente de 100,165 a 152,316 unidades (+52%) en el mismo periodo. Esta divergencia implica que el crecimiento de inventario es acumulación anticipada, no impulsada por mayor demanda de venta. Es, en última instancia, la causa raíz del faltante de capacidad: el espacio se satura por acumulación de stock, no por mayor rotación de venta.",
+      "respuesta": "Al cruzar esta proyección de saturación física con las expectativas de venta, detectamos una severa inconsistencia. Nuestro modelo estadístico más preciso (Suavización Exponencial Simple o SES) proyecta ventas totalmente planas, con un promedio de ~1,339 unidades por día. En contraste, el forecast de compras espera que el stock crezca un 52%. Esto revela que el incremento del inventario no responde a un aumento en la demanda, sino a la acumulación de productos de muy baja rotación y alto volumen. En consecuencia, el déficit proyectado es artificial.",
       "imagen": "images/venta_stock.png",
-      "nota": "Al desglosar la rotación de inventario por categoría (Venta total ÷ Stock promedio), se confirma que la acumulación no es pareja: categorías como SOMMIER BASES (1 unidad vendida vs. 303 en stock promedio) concentran la mayor parte, mientras categorías como RACKS o FANS rotan de forma saludable."
+      "nota": "Al desglosar la rotación de inventario por categoría (Venta total ÷ Stock promedio), se confirma que la acumulación no es pareja: categorías como SOMMIER BASES (1 unidad vendida vs. 303 en stock promedio) concentran la mayor parte, mientras categorías como RACKS o FANS rotan de forma saludable. Sería indispensable que el equipo Comercial detenga o reduzca de inmediato el flujo de ingreso de estas categorías para evitar saturar los pasillos del Fulfillment Center."
     },
     {
       "numero": 4,
@@ -47,7 +47,8 @@
         { "valor": "50.10 u/h", "etiqueta": "Método B (razón de totales — reportado)" },
         { "valor": "~0.7%", "etiqueta": "Diferencia entre métodos" }
       ],
-      "respuesta": "La productividad de packing se calculó como la relación entre las unidades vendidas (Venta) y las Horas Hombre de Packing mediante dos enfoques: (A) el promedio de las productividades diarias y (B) la razón entre las ventas totales y las horas-hombre totales del periodo. Ambos métodos arrojaron resultados muy similares (50.48 vs. 50.10 unidades por hora-hombre), con una diferencia menor al 1%, lo que indica que la productividad histórica es consistente y que el método de cálculo no afecta de forma significativa la estimación."
+      "respuesta": "Para planificar la demanda diaria, determinamos el ritmo real de nuestro equipo calculando la productividad base como la relación entre las ventas totales y las horas hombre trabajadas. Para asegurar que este indicador no estuviera influenciado por días atípicos, lo validamos con dos enfoques distintos. El primero consistió en promediar la productividad diaria, obteniendo 50.48 unidades por hora, mientras que el segundo calculó la productividad sobre el total del periodo, con un resultado de 50.10 unidades por hora. La diferencia entre ambos es menor al 1%, lo que demuestra una alta consistencia histórica y nos permite establecer 50.1 unidades por hora como nuestra productividad base para la planeación operativa.",
+      "nota": "Aunque este rendimiento es sólido bajo las condiciones actuales, no será sostenible a partir del 10 de julio. Podria ser que, el exceso de inventario sature el almacén lo que ocasionaria una congestión en los pasillos, incrementando los tiempos de traslado durante el picking y, como consecuencia, la productividad del proceso de packing disminuirá de forma inevitable."
     },
     {
       "numero": 5,
@@ -57,7 +58,7 @@
         { "valor": "48 hrs", "etiqueta": "Supuesto: jornada semanal por persona" },
         { "valor": "4 personas", "etiqueta": "Headcount necesario" }
       ],
-      "respuesta": "WK29 corresponde al periodo del 13 al 19 de julio de 2026. Para esta semana, el forecast de ventas (SES) estima un volumen constante de 1,339 unidades diarias, equivalente a 9,373 unidades semanales. Considerando una productividad histórica de 50.10 unidades por hora, se requieren aproximadamente 187.1 horas-hombre para cubrir la demanda proyectada.",
+      "respuesta": "Llevando esta productividad a la Semana 29 (13-19 de julio), estimamos procesar un total de 9,373 unidades (1,339 diarias proyectadas x 7 días). Si dividimos este volumen entre las 50.1 unidades por hora, requerimos 187.1 horas hombre en total. Considerando un esquema estándar en México de 48 horas semanales por operador, el cálculo matemático exige 3.89 aprox. Al aplicar el redondeo por seguridad técnica hacia arriba, confirmamos que necesitamos exactamente 4 operadores dedicados a Packing para cubrir esa semana sin incurrir en cuellos de botella ni estrés operativo.",
       "nota": "Supuesto: Tomando una jornada semanal de 48 horas por persona (estándar en México)."
     },
     {
@@ -74,7 +75,7 @@
         { "valor": "690 u/día", "etiqueta": "Volumen pico prorrateado" },
         { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
       ],
-      "respuesta": "Dado que el dataset no incluye una clasificación por tamaño de producto ni la capacidad de las mesas de packing, fue necesario establecer dos supuestos para estimar el staffing. Primero, los productos se clasificaron como Pequeños o Grandes utilizando la mediana del volumen unitario (0.026 m³), obteniendo un mix histórico de 51.5% para productos Pequeños. Segundo, se asumió que la productividad histórica de packing (50.1 unidades/hora) es la misma para ambos tamaños y que cada mesa opera en turnos de 8 horas. Bajo estos supuestos, el volumen proyectado para la WK29 (1,339 unidades por día) equivale aproximadamente a 690 unidades diarias de productos Pequeños."
+      "respuesta": "Para dimensionar las estaciones de empaque de productos pequeños, primero tuvimos que clasificarlos. Como el sistema no categorizaba la mercancía por tamaño, utilizamos la mediana del volumen físico (0.026 m³) como punto de corte, identificando que el 51.5% del flujo histórico corresponde a ítems pequeños. Al proyectar este porcentaje sobre nuestra demanda diaria (1,339 unidades totales), sabemos que el equipo deberá empacar ~690 artículos pequeños al día. Dado que una mesa estándar procesa 400.8 unidades en un turno de 8 horas (8h x 50.1 u/h), la matemática exige 1.72 estaciones. Operativamente, al redondear hacia arriba por seguridad, esto significa que debemos instalar 2 mesas exclusivas para productos pequeños."
     },
     {
       "numero": 8,
@@ -84,21 +85,22 @@
         { "valor": "649 u/día", "etiqueta": "Volumen pico prorrateado" },
         { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
       ],
-      "respuesta": "Aplicando el mismo mix histórico (48.5% de productos Grandes) al volumen proyectado para la WK29 (1,339 unidades por día), se estiman aproximadamente 649 unidades diarias de esta categoría. Considerando una capacidad de 400.8 unidades por mesa en un turno de 8 horas, se requieren 2 mesas para atender el volumen proyectado.",
-      "nota": "El cálculo se realizó bajo el supuesto de turnos de 8 horas. Aunque el requerimiento estimado se encuentra cercano al límite entre 1 y 2 mesas, se adoptó un redondeo conservador para evitar riesgos de saturación ante variaciones en la demanda o en la productividad."
+      "respuesta": "Siguiendo la misma regla de negocio, los artículos que superan el punto de corte representan el 48.5% restante de nuestro mix, lo que se traduce en empacar ~649 unidades grandes cada día durante el pico operativo. Si dividimos esta carga entre la misma capacidad instalada de 400.8 unidades por turno, el requerimiento es de 1.62 mesas. Por lo tanto, bajo el esquema actual, también necesitamos instalar 2 mesas para productos grandes.",
+      "nota": "Sin embargo, destaco una oportunidad crítica: ambos cálculos (1.72 y 1.62) rozan el límite. Ante la inminente crisis de espacio físico en el almacén, se sugiere evaluar estratégicamente una transición temporal a turnos extendidos de 10 horas. Esto aumentaría la capacidad por mesa a 501 unidades, permitiéndonos absorber toda la demanda operando con solo 1 mesa grande y 1 pequeña, liberando valiosos metros cuadrados en el piso."
     }
   ],
 
-  "conclusiones": [
-    "El FC MXXX1 muestra una reducción del 16% en la capacidad disponible respecto al inicio del periodo histórico, sin una causa identificable con la información disponible.",
-    "De mantenerse las condiciones actuales, el déficit de capacidad comenzará el 10 de julio y aumentará de forma gradual durante el resto del mes.",
-    "El crecimiento del inventario proyectado no responde a un incremento en la demanda, sino a una acumulación de stock en categorías específicas de baja rotación."
-],
+ "conclusiones": [
+    "**Pérdida de capacidad física:** El Fulfillment Center (MXXX1) sufrió una reducción de capacidad instalada del ~16% desde inicios de junio sin una causa operativa documentada, estabilizándose en un escenario conservador de 3,780 m³.",
+    "**Colapso inminente de espacio:** Debido a esta restricción, la operación enfrentará un déficit de espacio sostenido a partir del 10 de julio, proyectando un faltante crítico de +1,400 m³ para finales del mes.",
+    "**Acumulación de inventario nocivo (Causa Raíz):** El colapso del almacén no será provocado por un pico de ventas (las cuales se proyectan estables y planas en ~1,339 unidades diarias), sino por un crecimiento desproporcionado del inventario del +52%. Esta saturación proviene de categorías de muy baja rotación y gran volumen físico (ej. bases de cama y freidoras) que no tienen salida comercial en el corto plazo.",
+    "**Riesgo sobre la productividad:** Aunque la eficiencia actual de empaque es altamente predecible y estable (50.1 unidades por hora-hombre), corre un riesgo altísimo de desplomarse a partir de la segunda semana de julio; en cuanto el almacén supere el 100% de ocupación, la congestión en pasillos destruirá los tiempos de picking."
+]
 
-  "recomendaciones": [
-    "Validar con la causa de la reducción de capacidad observada a partir del 10 de junio.",
-    "Planificar acciones para incrementar la capacidad disponible antes del 10 de julio, ya sea mediante redistribución de inventario o habilitación de espacio adicional.",
-    "Revisar con Compras y Comercial las categorías de baja rotación para identificar oportunidades de reducir la acumulación de inventario.",
-    "Confirmar la capacidad instalada oficial del FC y compararla con la capacidad implícita estimada en el análisis."
+  "conclusiones": [
+    "**Frenar Inbounds inmediatamente:** Confirmar con el equipo Comercial y de Compras la narrativa detrás del crecimiento de stock y detener temporalmente el ingreso de las categorías de bajo giro. Es imperativo no recibir inventario que no esté respaldado por un pronóstico de venta real.",
+    "**Investigación y recuperación de Layout:** Escalar de manera urgente con Warehouse Operations para auditar el evento del 9-10 de junio, descubrir qué está bloqueando la capacidad física y recuperar esos metros cúbicos antes de entrar en déficit el 10 de julio.",
+    "**Optimización de espacio mediante turnos:** Validar con el equipo de Packing el umbral de tamaño de productos (pequeño vs. grande) y evaluar estratégicamente un esquema de turnos extendidos de 10 horas. Esto permitirá procesar la misma demanda usando solo 2 mesas de trabajo en lugar de 4, liberando espacio crítico en el piso de operación.",
+    "**Asegurar plantilla (Staffing) y monitoreo:** Contratar o reasignar a 4 operadores dedicados exclusivamente a la zona de empaque para cubrir la demanda de la Semana 29. Adicionalmente, establecer un monitoreo semanal para auditar si la productividad operativa (50.1 u/h) se mantiene o comienza a degradarse conforme aumente la saturación del almacén."
 ]
 }
