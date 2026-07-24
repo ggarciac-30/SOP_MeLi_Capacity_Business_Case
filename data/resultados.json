@@ -1,0 +1,104 @@
+{
+  "_comentario": "Este archivo contiene TODO el contenido editable de la pagina. No necesitas tocar el HTML ni el JS para cambiar un texto o un numero -- lo cambias aqui y se actualiza solo. El bloque mas importante es 'analisis': cada objeto de ese array es UNA pregunta del caso con su respuesta, y se dibuja automaticamente como una tarjeta en la seccion 'Análisis' de la pagina.",
+
+  "_comentario_analisis": "Para AGREGAR una pregunta nueva: copia un objeto completo de este array (desde { hasta }, incluida la coma de despues) y pegalo antes del ']' que cierra el array. Cambia 'numero', 'pregunta' y 'respuesta'. Los campos 'kpis', 'imagen', 'tabla' y 'nota' son OPCIONALES -- borra los que no uses en tu pregunta nueva.",
+
+  "analisis": [
+    {
+      "numero": 1,
+      "pregunta": "¿Cuál es tu capacidad de almacenaje promedio histórica en M3?",
+      "kpis": [
+        { "valor": "3,406 m³", "etiqueta": "Volumen ocupado promedio histórico" },
+        { "valor": "4,251 m³", "etiqueta": "Capacidad instalada implícita (promedio)" },
+        { "valor": "~5.1%", "etiqueta": "Coef. de variación de capacidad implícita", "tipo": "alerta" }
+      ],
+      "respuesta": "Se calculó el volumen unitario de cada SKU (largo × ancho × alto) multiplicado por el stock diario de BD_1, sumado a nivel almacén-día y promediado sobre los 30 días históricos (27-may al 25-jun-2026). Al validar el supuesto de capacidad constante, se detectaron dos regímenes: uno estable (27-may a 9-jun, ~4,300-4,540 m³) y una caída sostenida desde el 10-jun hasta ~3,780 m³ (-16% en 15 días), sin causa explicable en los datos disponibles.",
+      "imagen": "images/capacidad_instalada.png",
+      "nota": "Supuesto declarado: \"Ocupación Almacenamiento\" representa % de ocupación sobre capacidad instalada. La caída sugiere una reducción operativa (no física) — bloqueo de racks, mantenimiento o reconfiguración — a validar con Warehouse Ops."
+    },
+    {
+      "numero": 2,
+      "pregunta": "¿Cuál es tu pico de ocupación en M3 proyectada? ¿Por qué?",
+      "respuesta": "BD_1 (histórico) y BD_2 (forecast) son tramos consecutivos de una misma serie, no bases a unir por fecha coincidente. Se derivó un factor de densidad (m³/unidad) del histórico y se aplicó al forecast de stock de BD_2 para proyectar el volumen requerido en julio. El faltante crece de forma sostenida (no es un pico puntual) porque el stock de BD_2 tiene tendencia creciente constante (+52% en 30 días) mientras la capacidad no la tiene — el pico dentro del horizonte analizado es el último día disponible, 25-julio.",
+      "tabla": {
+        "titulo": "Sensibilidad — escenarios de capacidad",
+        "encabezados": ["Escenario", "Capacidad", "Inicio de déficit", "Faltante al 25-jul"],
+        "filas": [
+          ["Conservador (recomendado)", "3,780 m³", "10-julio-2026", "+1,400 m³"],
+          ["Base histórico", "3,406 m³", "4-julio-2026", "+1,774 m³"],
+          ["Optimista", "4,251 m³", "16-julio-2026", "+929 m³"]
+        ]
+      },
+      "nota": "Recomendación: usar el escenario conservador (3,780 m³) como caso base. Ventana de acción de ~2 semanas desde el cierre del histórico hasta el inicio del déficit (10-jul)."
+    },
+    {
+      "numero": 3,
+      "pregunta": "¿Qué insights tienes de la ocupación proyectada?",
+      "respuesta": "El forecast de venta (modelo ganador: Suavización Exponencial Simple) proyecta una línea prácticamente plana de ~1,339 unidades/día para todo julio, sin tendencia. En contraste, el forecast de stock de BD_2 crece sostenidamente de 100,165 a 152,316 unidades (+52%) en el mismo periodo. Esta divergencia implica que el crecimiento de inventario es acumulación anticipada, no impulsada por mayor demanda de venta. Es, en última instancia, la causa raíz del faltante de capacidad: el espacio se satura por acumulación de stock, no por mayor rotación de venta.",
+      "imagen": "images/venta_stock.png",
+      "nota": "Al desglosar la rotación de inventario por categoría (Venta total ÷ Stock promedio), se confirma que la acumulación no es pareja: categorías como SOMMIER BASES (1 unidad vendida vs. 303 en stock promedio) concentran la mayor parte, mientras categorías como RACKS o FANS rotan de forma saludable."
+    },
+    {
+      "numero": 4,
+      "pregunta": "¿Cuál es tu productividad horaria histórica promedio de Packing?",
+      "kpis": [
+        { "valor": "50.48 u/h", "etiqueta": "Método A (promedio de razones diarias)" },
+        { "valor": "50.10 u/h", "etiqueta": "Método B (razón de totales — reportado)" },
+        { "valor": "~0.7%", "etiqueta": "Diferencia entre métodos" }
+      ],
+      "respuesta": "Productividad = Unidades vendidas (Venta) ÷ Horas Hombre Packing, calculada de dos formas para validar consistencia. Respuesta: ~50.1 unidades/hora-hombre. La cercanía entre ambos métodos (diferencia menor a 1%) indica que la productividad histórica es estable día a día, sin outliers que la distorsionen."
+    },
+    {
+      "numero": 5,
+      "pregunta": "¿Cuánta gente tenemos que tener contratada para el proceso de Packing en la WK 29?",
+      "kpis": [
+        { "valor": "187.1 hrs", "etiqueta": "Horas-hombre necesarias en WK29" },
+        { "valor": "48 hrs", "etiqueta": "Supuesto: jornada semanal por persona" },
+        { "valor": "4 personas", "etiqueta": "Headcount necesario" }
+      ],
+      "respuesta": "WK29 corresponde al 13-19 de julio de 2026 (numeración de semana ISO, confirmada contra la columna Week Sum del histórico). El forecast de venta (SES) proyecta 1,339 unidades/día constantes para toda la semana. Horas-hombre necesarias = Volumen semanal (1,339 × 7 = 9,373 unidades) ÷ Productividad (50.10 u/h) = 187.1 horas-hombre.",
+      "nota": "Supuesto declarado: jornada semanal de 48 horas por persona (esquema estándar en México). Redondeo hacia arriba (ceil), estándar en dimensionamiento de capacidad para no quedar corto ante el pico."
+    },
+    {
+      "numero": 6,
+      "pregunta": "¿Consideras que la productividad histórica se puede mantener a lo largo del tiempo? Sí, no ¿Por qué?",
+      "respuesta": "Sí, en el corto plazo (horizonte de julio 2026), con reservas. La evidencia de la Pregunta 4 (diferencia menor a 1% entre Método A y B) muestra que la productividad no tiene outliers diarios ni volatilidad relevante durante el periodo histórico observado — es un proceso estable. Sin embargo, esta estabilidad se validó solo contra el histórico de 30 días; no incorpora el efecto del crecimiento de stock identificado en la Pregunta 3. Si el volumen a procesar crece de forma sostenida sin una inversión proporcional en staffing/mesas, es razonable esperar fatiga operativa o saturación que reduzca la productividad marginal — riesgo a monitorear, no un hecho confirmado con los datos actuales.",
+      "nota": "Recomendación: dar seguimiento semanal a la productividad real vs. el supuesto de 50.1 u/h conforme se acerque el pico de julio, para detectar desviaciones tempranamente."
+    },
+    {
+      "numero": 7,
+      "pregunta": "Calcula la necesidad Pico Futura de Mesas de Packing — Producto Pequeño",
+      "kpis": [
+        { "valor": "2 mesas", "etiqueta": "Producto Pequeño" },
+        { "valor": "690 u/día", "etiqueta": "Volumen pico prorrateado" },
+        { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
+      ],
+      "respuesta": "El dataset no incluye clasificación de tamaño de producto ni capacidad de mesa — se declaran dos supuestos: (1) corte en la mediana del volumen unitario (~0.026 m³) para clasificar Pequeño/Grande, con un mix histórico resultante de 51.5% Pequeño; y (2) la productividad histórica (50.1 u/h) aplica por igual a ambos tamaños, con turno de 8 horas por mesa. El volumen pico de WK29 (1,339 u/día) prorrateado por el mix da 690 u/día para Pequeño."
+    },
+    {
+      "numero": 8,
+      "pregunta": "Calcula la necesidad Pico Futura de Mesas de Packing — Producto Grande",
+      "kpis": [
+        { "valor": "2 mesas", "etiqueta": "Producto Grande" },
+        { "valor": "649 u/día", "etiqueta": "Volumen pico prorrateado" },
+        { "valor": "400.8 u/día", "etiqueta": "Throughput por mesa" }
+      ],
+      "respuesta": "Con el mismo mix histórico (48.5% Grande) aplicado al volumen pico de WK29 (1,339 u/día), el volumen prorrateado para Grande es 649 u/día — que dividido entre el throughput por mesa (400.8 u/día) da igualmente 2 mesas.",
+      "nota": "Nota de sensibilidad: ambos resultados (1.72 y 1.62 antes de redondear) están cerca del límite entre 1 y 2 mesas. Con un turno de 10h en vez de 8h, el resultado bajaría a 1 mesa por categoría — el redondeo hacia arriba es intencionalmente conservador."
+    }
+  ],
+
+  "conclusiones": [
+    "El FC MXXX1 presenta una reducción no explicada de capacidad instalada del 16%, detectada al validar el supuesto de ocupación constante contra los datos históricos.",
+    "Sin intervención, el faltante de espacio inicia el 10 de julio de 2026 y crece de forma sostenida durante el resto del mes.",
+    "La causa del crecimiento de stock no es un aumento general de demanda — la venta proyectada se mantiene plana — sino una acumulación concentrada en categorías específicas de bajo giro."
+  ],
+
+  "recomendaciones": [
+    "Validar con el equipo de Warehouse Operations la causa de la caída de capacidad detectada a partir del 9-10 de junio.",
+    "Iniciar gestión de capacidad adicional (renta de espacio, redistribución de SKUs) con al menos 2 semanas de anticipación al 10 de julio.",
+    "Revisar con Compras/Comercial las categorías de menor rotación para evaluar sobre-compra, descontinuación o estacionalidad.",
+    "Confirmar la cifra oficial de capacidad instalada de catálogo del FC contra la cifra derivada de los datos disponibles.",
+    "Contratar/reasignar 4 personas para cubrir WK29, con monitoreo semanal de productividad real."
+  ]
+}

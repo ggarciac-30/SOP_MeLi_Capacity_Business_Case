@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caso S&OP - Mercado Envíos</title>
+
+  <!-- ============================================================ -->
+  <!-- OPEN GRAPH: esto es lo que WhatsApp/Facebook/LinkedIn leen    -->
+  <!-- para armar la tarjeta de vista previa al compartir el link.   -->
+  <!-- EDITA AQUI el titulo/descripcion que quieres que se vea.      -->
+  <!-- IMPORTANTE: og:image y og:url deben ser URLs ABSOLUTAS        -->
+  <!-- (con https://...), no rutas relativas, o WhatsApp no las lee. -->
+  <!-- ============================================================ -->
+  <meta property="og:title" content="Caso S&OP · Mercado Envíos" />
+  <meta property="og:description" content="Análisis de capacidad, proyección de faltante y staffing con Python." />
+  <meta property="og:image" content="https://ggarciac-30.github.io/SOP_MeLi_Business-Case/images/logo_meli.png" />
+  <meta property="og:url" content="https://ggarciac-30.github.io/SOP_MeLi_Business-Case/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter/X usa sus propias etiquetas (algunas apps las leen tambien) -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Caso S&OP · Mercado Envíos" />
+  <meta name="twitter:image" content="https://ggarciac-30.github.io/SOP_MeLi_Business-Case/images/logo_meli.png" />
+
+  <!-- Favicon: el icono pequeño que aparece en la pestaña del navegador -->
+  <link rel="icon" type="image/png" href="images/logo_meli.png" />
+
+  <!-- ============================================================ -->
+  <!-- Aqui se conecta el archivo de estilos. Si renombras el CSS,  -->
+  <!-- actualiza esta ruta.                                         -->
+  <!-- ============================================================ -->
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Tipografia: si quieres cambiarla, reemplaza este link de Google Fonts
+       y actualiza la variable --fuente-principal en css/styles.css -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- OVERLAY: sugiere rotar el dispositivo en movil                -->
+  <!-- Se muestra/oculta automaticamente via JavaScript (ver         -->
+  <!-- checkOrientation() en js/script.js) segun el ancho de         -->
+  <!-- pantalla y la orientacion. No necesitas tocar esto a mano.    -->
+  <!-- Para cambiar el texto o el icono, edita aqui abajo.           -->
+  <!-- ============================================================ -->
+  <div id="rotate-message">
+    <div class="rotate-content">
+      <div class="phone-icon">📱</div>
+      <h2>Mejor experiencia en horizontal</h2>
+      <p>Gira tu dispositivo para visualizar correctamente los gráficos y dashboards.</p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- BADGE FLOTANTE: pastilla fija en la esquina, independiente    -->
+  <!-- del sidebar/menu. EDITA AQUI el link y el texto.              -->
+  <!-- IMPORTANTE: este bloque debe ir DENTRO de <body>, nunca       -->
+  <!-- despues de </html> -- fuera del documento el navegador lo     -->
+  <!-- puede ignorar o mostrar de forma inconsistente.               -->
+  <!-- En pantallas angostas (celular) el CSS reduce el texto a solo -->
+  <!-- el emoji para no tapar contenido -- ver .floating-badge en    -->
+  <!-- css/styles.css, bloque @media al final del archivo.           -->
+  <!-- ============================================================ -->
+  <a href="https://linkedin.com/in/ggarciac" class="floating-badge" target="_blank" rel="noopener">
+    <span class="floating-badge-icon">👋🏼</span>
+    <span class="floating-badge-text">Presentado por: Gustavo Garcia Carrillo</span>
+  </a>
+
+  <!-- ============================================================ -->
+  <!-- MENU LATERAL (SIDEBAR)                                        -->
+  <!-- Para agregar una nueva seccion al menu:                       -->
+  <!-- 1) Copia un <a> completo aqui abajo                           -->
+  <!-- 2) Cambia el href="#id" para que apunte al id de tu seccion   -->
+  <!-- 3) Cambia el texto visible                                    -->
+  <!-- 4) Crea la seccion correspondiente mas abajo con ese mismo id -->
+  <!-- ============================================================ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-logo">📦</span>
+      <span class="sidebar-title">Caso S&amp;OP</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <!-- Cada <a> es un item del menu. data-section debe coincidir con el id de la seccion -->
+      <a href="#inicio" class="nav-link active" data-section="inicio">Inicio</a>
+      <a href="#objetivo" class="nav-link" data-section="objetivo">Objetivo</a>
+      <a href="#dataset" class="nav-link" data-section="dataset">Dataset</a>
+      <a href="#calidad-datos" class="nav-link" data-section="calidad-datos">Calidad de datos</a>
+      <a href="#analisis" class="nav-link" data-section="analisis">Análisis</a>
+      <a href="#conclusiones" class="nav-link" data-section="conclusiones">Conclusiones</a>
+      <a href="#recomendaciones" class="nav-link" data-section="recomendaciones">Recomendaciones</a>
+    </nav>
+  </aside>
+
+  <!-- Boton hamburguesa: solo se ve en movil (controlado en el CSS con @media) -->
+  <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+
+  <!-- ============================================================ -->
+  <!-- CONTENIDO PRINCIPAL                                           -->
+  <!-- Cada <section> de aqui en adelante es una pantalla del menu.  -->
+  <!-- El id de cada <section> debe coincidir EXACTO con el          -->
+  <!-- data-section del link correspondiente en el sidebar.          -->
+  <!-- ============================================================ -->
+  <main class="main-content">
+
+    <!-- ============================================================ -->
+    <!-- CONTENEDOR INTERNO: centra el contenido dentro del espacio    -->
+    <!-- disponible (a la derecha del sidebar). Sin esto, en pantallas -->
+    <!-- anchas el texto se queda pegado a la izquierda y sobra mucho  -->
+    <!-- espacio en blanco a la derecha. El ancho maximo se controla   -->
+    <!-- con --ancho-contenido en css/styles.css.                      -->
+    <!-- ============================================================ -->
+    <div class="content-wrap">
+
+    <!-- ===== SECCION: INICIO ===== -->
+    <section id="inicio" class="page-section hero-section">
+      <!-- EDITA AQUI: titulo principal de la portada -->
+      <span class="badge">Análisis realizado por Gustavo Garcia Carrillo</span>
+      <h1>S&OP · Capacity Business Case | Sr. Analyst</h1>
+      <!-- EDITA AQUI: subtitulo/resumen de una linea -->
+      <p class="hero-subtitle">
+        El objetivo de este Business Case es evaluar el desempeño operativo de un Fulfillment Center,
+        mediante una muestra de datos históricos, que permitan analizar la capacidad de almacenamiento,
+        la capacidad operativa y el dimensionamiento del personal.
+      </p>
+      <a href="#objetivo" class="btn-primary">Ver el análisis ↓</a>
+    </section>
+
+    <!-- ===== SECCION: OBJETIVO ===== -->
+    <section id="objetivo" class="page-section">
+      <h2 class="section-title">Objetivo del análisis</h2>
+      <!-- BLOQUE DE TEXTO: puedes duplicar este <div class="text-block"> las veces que quieras -->
+      <div class="text-block">
+        <p>
+          El objetivo de este Business Case es evaluar el desempeño operativo de un Fulfillment Center,
+          mediante una muestra de datos históricos, que permitan analizar la capacidad de almacenamiento,
+          la capacidad operativa y el dimensionamiento del personal. Con este análisis, se pretende
+          identificar oportunidades de mejora y recomendaciones para la toma de decisiones.
+        </p>
+      </div>
+
+      <!-- CALLOUT: bloque destacado para preguntas/decisiones de negocio. Duplica este div para otro callout -->
+      <div class="callout callout-info">
+        <span class="callout-icon">🎯</span>
+        <div>
+          <strong>Decisión de negocio detrás del análisis</strong>
+          <p>Determinar cuándo y cómo el inventario proyectado superará la capacidad del FC.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECCION: DATASET ===== -->
+    <section id="dataset" class="page-section">
+      <h2 class="section-title">Dataset</h2>
+      <div class="text-block">
+        <p>Dos fuentes de datos identificadas, tratadas como tramos consecutivos de una misma línea de tiempo:</p>
+      </div>
+
+      <!-- GRID DE CARDS: para agregar otra fuente de datos, duplica un .card completo dentro de este div -->
+      <div class="card-grid">
+        <div class="card">
+          <h3>BD_1 — Histórico</h3>
+          <p>30 días (27-may a 25-jun-2026). 60 categorías de producto, dimensiones (largo, ancho, alto), stock diario,
+             venta y horas-hombre de packing.</p>
+        </div>
+        <div class="card">
+          <h3>BD_2 — Forecast</h3>
+          <p>30 días (26-jun a 25-jul-2026). Forecast de stock total agregado, sin desglose por
+             categoría ni dimensiones.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECCION: CALIDAD DE DATOS ===== -->
+    <section id="calidad-datos" class="page-section">
+      <h2 class="section-title">Calidad de datos</h2>
+
+      <!-- ALERTA: usa esta estructura para mostrar hallazgos de calidad de datos.
+           Cambia la clase "alerta-amarilla" por "alerta-roja" o "alerta-verde" segun la severidad -->
+      <div class="alerta alerta-amarilla">
+        <strong>41 registros con categoría nula (~0.8%)</strong>
+        <p>Se conservan en los cálculos de volumen/stock (representan inventario real).</p>
+      </div>
+
+      <div class="alerta alerta-verde">
+        <strong>Sin duplicados exactos ni valores imposibles</strong>
+        <p>No se encontraron dimensiones negativas, ni filas 100% duplicadas en el dataset histórico.</p>
+      </div>
+    </section>
+
+    <!-- ===== SECCION: ANALISIS ===== -->
+    <!-- Esta seccion reemplaza a la antigua "Graficos". Aqui se responden  -->
+    <!-- las 8 preguntas del caso de negocio, en el mismo orden que el PDF. -->
+    <!-- NO EDITES AQUI el contenido de las preguntas -- eso vive en        -->
+    <!-- data/resultados.json (bloque "analisis"). Este contenedor solo     -->
+    <!-- recibe las tarjetas que arma js/script.js automaticamente.         -->
+    <section id="analisis" class="page-section">
+      <h2 class="section-title">Análisis</h2>
+      <div class="text-block">
+        <p>Respuestas a las 8 preguntas del caso de negocio, con la metodología, los supuestos declarados
+           y la evidencia (gráficas y tablas) detrás de cada una.</p>
+      </div>
+
+      <!-- Las tarjetas de pregunta/respuesta se insertan aqui via JavaScript,
+           una por cada objeto del array "analisis" en data/resultados.json -->
+      <div id="analisisContainer">
+        <!-- Se llena automaticamente -->
+      </div>
+    </section>
+
+    <!-- ===== SECCION: CONCLUSIONES ===== -->
+    <section id="conclusiones" class="page-section">
+      <h2 class="section-title">Conclusiones</h2>
+      <!-- Se llena automaticamente desde el bloque "conclusiones" del JSON (es una lista simple) -->
+      <ul class="simple-list" id="conclusionesContainer">
+        <!-- Los items se insertan aqui via JavaScript -->
+      </ul>
+    </section>
+
+    <!-- ===== SECCION: RECOMENDACIONES ===== -->
+    <section id="recomendaciones" class="page-section">
+      <h2 class="section-title">Recomendaciones</h2>
+
+      <!-- CALLOUT de recomendaciones: se llena automaticamente desde el bloque "recomendaciones" del JSON -->
+      <div class="callout callout-recomendacion">
+        <span class="callout-icon">✅</span>
+        <div>
+          <strong>Próximos pasos accionables</strong>
+          <ul class="simple-list" id="recomendacionesContainer">
+            <!-- Los items se insertan aqui via JavaScript -->
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- PIE DE PAGINA -->
+    <footer class="page-footer">
+      <p>Caso de negocio resuelto de forma independiente. Código y datos completos en el repositorio.</p>
+      <!-- EDITA AQUI: pon tus links reales -->
+      <div class="footer-links">
+        <a href="https://github.com/ggarciac-30/SOP_MeLi_Business-Case" target="_blank" rel="noopener">Ver repositorio →</a>
+        <a href="https://linkedin.com/in/ggarciac" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </footer>
+
+    </div><!-- /content-wrap -->
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- Aqui se conecta el archivo de JavaScript. Debe ir AL FINAL    -->
+  <!-- del body para que el HTML ya exista cuando el script corra.  -->
+  <!-- ============================================================ -->
+  <script src="js/script.js"></script>
+</body>
+</html>

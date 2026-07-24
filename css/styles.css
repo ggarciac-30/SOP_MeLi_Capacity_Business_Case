@@ -1,0 +1,690 @@
+/* ================================================================
+   HOJA DE ESTILOS — Caso S&OP Mercado Envios
+   ================================================================
+   Organizacion de este archivo (usa Ctrl+F para saltar de bloque):
+   1. VARIABLES        <- cambia colores/fuentes/espaciados aqui
+   2. RESET Y BASE      <- estilos globales del documento
+   3. LAYOUT            <- sidebar + area de contenido
+   4. COMPONENTES       <- cards, kpis, tablas, alertas, analisis, badge
+   5. RESPONSIVE        <- ajustes para pantallas pequeñas (al final)
+   ================================================================ */
+
+
+/* ================================================================
+   1. VARIABLES
+   ================================================================
+   Esto es lo primero que deberias tocar si quieres cambiar el
+   aspecto general del sitio. Cambia un valor aqui y se actualiza
+   en TODO el sitio automaticamente. */
+:root {
+
+  /* --- Colores principales ---
+     Cambia estos dos colores para cambiar la identidad visual completa. */
+  --color-primario: #FFE600;       /* amarillo, para acentos y botones destacados */
+  --color-secundario: #3483FA;     /* azul, para links, iconos y elementos interactivos */
+  --color-secundario-oscuro: #2968C8;
+
+  /* --- Colores de estado (para alertas y severidad) --- */
+  --color-exito: #00A650;          /* verde: todo bien */
+  --color-advertencia: #F5A524;    /* amarillo/naranja: atencion */
+  --color-peligro: #FF7733;        /* naranja/rojo: riesgo alto */
+
+  /* --- Colores de fondo y texto --- */
+  --color-fondo: #F4F4F4;
+  --color-fondo-tarjeta: #FFFFFF;
+  --color-texto: #333333;
+  --color-texto-secundario: #666666;
+  --color-borde: #E0E0E0;
+
+  /* --- Tipografia ---
+     Si cambias la fuente, recuerda actualizar el <link> de Google Fonts en el <head> del HTML */
+  --fuente-principal: 'Inter', -apple-system, sans-serif;
+
+  /* --- Espaciados ---
+     Escala de espaciado consistente: usala en vez de numeros sueltos */
+  --espacio-xs: 8px;
+  --espacio-sm: 16px;
+  --espacio-md: 24px;
+  --espacio-lg: 40px;
+  --espacio-xl: 64px;
+
+  /* --- Bordes y sombras --- */
+  --radio-borde: 12px;
+  --sombra-suave: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --sombra-media: 0 4px 20px rgba(0, 0, 0, 0.1);
+
+  /* --- Ancho del sidebar (usado en varios lugares, mejor tenerlo en una variable) --- */
+  --ancho-sidebar: 240px;
+
+  /* --- Ancho maximo del contenido de texto ---
+     En pantallas anchas (monitor de escritorio), el contenido no se
+     estira a todo lo ancho -- se queda centrado en esta medida para
+     que las lineas de texto no queden demasiado largas de leer, y
+     para que no se vea "cortado" pegado a la izquierda con un hueco
+     enorme de espacio en blanco a la derecha.
+     Sube este numero si quieres que el contenido se vea mas "ancho". */
+  --ancho-contenido: 920px;
+}
+
+
+/* ================================================================
+   2. RESET Y BASE
+   ================================================================ */
+
+/* Reset basico: quita margenes/paddings por defecto del navegador */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth; /* hace que los links del menu se desplacen suave, no de golpe */
+}
+
+body {
+  font-family: var(--fuente-principal);
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  color: #222222;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+
+/* ================================================================
+   COMPONENTE: overlay para sugerir rotar el dispositivo
+   ================================================================
+   Este bloque controla el aviso de pantalla completa que aparece en
+   celulares cuando estan en vertical. El JavaScript (checkOrientation
+   en js/script.js) decide CUANDO se muestra -- aqui solo definimos
+   como SE VE. */
+#rotate-message {
+  position: fixed;
+  inset: 0; /* equivale a top:0; right:0; bottom:0; left:0; */
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  display: none; /* oculto por defecto; el JS lo cambia a "flex" cuando aplica */
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* siempre encima de todo lo demas */
+  text-align: center;
+}
+
+.rotate-content {
+  max-width: 320px;
+  padding: 20px;
+}
+
+.phone-icon {
+  font-size: 70px;
+  animation: rotatePhone 1.5s infinite ease-in-out;
+}
+
+@keyframes rotatePhone {
+  0%   { transform: rotate(0deg); }
+  50%  { transform: rotate(90deg); }
+  100% { transform: rotate(90deg); }
+}
+
+
+/* ================================================================
+   3. LAYOUT — sidebar fijo + contenido principal
+   ================================================================ */
+
+/* --- Sidebar (menu lateral) --- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--ancho-sidebar);
+  height: 100vh;
+  background-color: var(--color-fondo-tarjeta);
+  border-right: 1px solid var(--color-borde);
+  padding: var(--espacio-md) var(--espacio-sm);
+  overflow-y: auto; /* si el menu crece mucho, permite scroll dentro del propio sidebar */
+  z-index: 100;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-xs);
+  margin-bottom: var(--espacio-lg);
+}
+
+.sidebar-logo {
+  font-size: 22px;
+}
+
+.sidebar-title {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Cada link del menu */
+.nav-link {
+  padding: 10px 14px;
+  border-radius: var(--radio-borde);
+  color: var(--color-texto-secundario);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.nav-link:hover {
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+/* Estado activo: se aplica automaticamente via JavaScript cuando
+   el usuario esta viendo esa seccion (ver script.js) */
+.nav-link.active {
+  background-color: rgba(52, 131, 250, 0.1);
+  color: var(--color-secundario-oscuro);
+  font-weight: 700;
+}
+
+/* Boton hamburguesa: oculto en escritorio, visible solo en movil (ver seccion RESPONSIVE) */
+.menu-toggle {
+  display: none;
+}
+
+/* --- Area de contenido principal ---
+   Ocupa TODO el espacio que sobra a la derecha del sidebar (no tiene
+   max-width aqui a proposito). Quien limita el ancho del texto es
+   .content-wrap de aqui abajo -- separar estas dos cosas es lo que
+   permite centrar el contenido en vez de que se pegue a la izquierda
+   con un hueco en blanco enorme del lado derecho en monitores anchos. */
+.main-content {
+  margin-left: var(--ancho-sidebar); /* deja espacio para que el sidebar fijo no tape el contenido */
+  padding: var(--espacio-xl) var(--espacio-lg);
+  min-height: 100vh;
+}
+
+/* --- Contenedor interno centrado ---
+   Este es el que de verdad limita que tan anchas se ven las lineas
+   de texto, y "margin: 0 auto" es lo que lo centra dentro del
+   espacio disponible. Cambia --ancho-contenido arriba en :root si
+   quieres que se vea mas ancho o mas angosto. */
+.content-wrap {
+  max-width: var(--ancho-contenido);
+  margin: 0 auto;
+}
+
+/* Cada seccion del menu (Inicio, Objetivo, etc.) */
+.page-section {
+  padding-bottom: var(--espacio-xl);
+  margin-bottom: var(--espacio-xl);
+  border-bottom: 1px solid var(--color-borde);
+  scroll-margin-top: var(--espacio-lg); /* evita que el titulo quede pegado arriba al hacer scroll con el menu */
+}
+
+.page-section:last-of-type {
+  border-bottom: none;
+}
+
+.section-title {
+  font-size: 1.6rem;
+  margin-bottom: var(--espacio-md);
+}
+
+.subsection-title {
+  font-size: 1.15rem;
+  margin: var(--espacio-lg) 0 var(--espacio-sm);
+}
+
+
+/* ================================================================
+   4. COMPONENTES
+   ================================================================ */
+
+/* --- Seccion Hero (Inicio) --- */
+.hero-section {
+  padding-top: var(--espacio-md);
+}
+
+.badge {
+  display: inline-block;
+  background-color: rgba(52, 131, 250, 0.1);
+  color: var(--color-secundario-oscuro);
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: var(--espacio-sm);
+}
+
+.hero-section h1 {
+  font-size: 2.2rem;
+  margin-bottom: var(--espacio-sm);
+}
+
+.hero-subtitle {
+  color: var(--color-texto-secundario);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin-bottom: var(--espacio-md);
+}
+
+.btn-primary {
+  display: inline-block;
+  background-color: var(--color-secundario);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: var(--radio-borde);
+  font-weight: 600;
+  transition: background-color 0.15s;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-secundario-oscuro);
+}
+
+/* --- Bloque de texto simple (parrafos) ---
+   Duplica un <div class="text-block"> en el HTML para agregar otro bloque */
+.text-block {
+  margin-bottom: var(--espacio-md);
+}
+
+.text-block p {
+  color: var(--color-texto-secundario);
+}
+
+/* --- Cards genericas (usadas en Dataset, etc.) --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--espacio-sm);
+}
+
+.card {
+  background-color: var(--color-fondo-tarjeta);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-sm);
+}
+
+.card h3 {
+  font-size: 1.05rem;
+  margin-bottom: var(--espacio-xs);
+}
+
+.card p {
+  color: var(--color-texto-secundario);
+  font-size: 14.5px;
+}
+
+/* --- KPI Cards ---
+   Se usan sueltas (si algun dia agregas una seccion de KPIs generales)
+   y tambien DENTRO de cada tarjeta de Análisis (ver .kpi-grid-compacta
+   mas abajo). Si quieres cambiar como se VEN, edita aqui. Si quieres
+   cambiar los VALORES, edita data/resultados.json, no este CSS. */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--espacio-sm);
+}
+
+.kpi-card {
+  background-color: var(--color-fondo-tarjeta);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  padding: var(--espacio-md);
+  border-left: 4px solid var(--color-secundario);
+}
+
+/* Cuando el KPI es de tipo "alerta" (definido en el JSON), se ve con borde naranja */
+.kpi-card.alerta {
+  border-left-color: var(--color-peligro);
+}
+
+.kpi-valor {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #222222;
+  display: block;
+}
+
+.kpi-card.alerta .kpi-valor {
+  color: var(--color-peligro);
+}
+
+.kpi-etiqueta {
+  font-size: 12.5px;
+  color: var(--color-texto-secundario);
+}
+
+/* --- Callouts (bloques destacados: objetivo, recomendaciones) ---
+   Duplica un <div class="callout callout-info"> en el HTML para otro callout */
+.callout {
+  display: flex;
+  gap: var(--espacio-sm);
+  background-color: #FFF9E5;
+  border: 1px solid #FFE9A8;
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-md);
+}
+
+.callout-recomendacion {
+  background-color: #E7F7EE;
+  border-color: #B9E9CE;
+}
+
+.callout-icon {
+  font-size: 22px;
+}
+
+/* --- Alertas de calidad de datos ---
+   Tres variantes de color: cambia la clase en el HTML para elegir la severidad */
+.alerta {
+  border-radius: var(--radio-borde);
+  padding: var(--espacio-sm) var(--espacio-md);
+  margin-bottom: var(--espacio-sm);
+}
+
+.alerta strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.alerta p {
+  font-size: 14px;
+  color: var(--color-texto-secundario);
+}
+
+.alerta-amarilla {
+  background-color: #FFF9E5;
+  border-left: 4px solid var(--color-advertencia);
+}
+
+.alerta-roja {
+  background-color: #FFF0E9;
+  border-left: 4px solid var(--color-peligro);
+}
+
+.alerta-verde {
+  background-color: #E7F7EE;
+  border-left: 4px solid var(--color-exito);
+}
+
+/* --- Tabla de datos --- */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  margin-bottom: var(--espacio-sm);
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.data-table th {
+  background-color: var(--color-fondo);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--color-texto-secundario);
+}
+
+/* --- Listas simples (conclusiones, recomendaciones) --- */
+.simple-list {
+  list-style: none;
+}
+
+.simple-list li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: var(--espacio-xs);
+  color: var(--color-texto-secundario);
+  font-size: 14.5px;
+}
+
+.simple-list li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: var(--color-secundario);
+  font-weight: 700;
+}
+
+
+/* ================================================================
+   COMPONENTE: tarjetas de "Análisis" (pregunta + respuesta)
+   ================================================================
+   Cada objeto del array "analisis" en data/resultados.json se
+   convierte en UNA de estas tarjetas via renderAnalisis() en
+   js/script.js. Para cambiar como se VEN todas las tarjetas a la
+   vez, edita aqui. Para cambiar el CONTENIDO de una pregunta,
+   edita el JSON, no este archivo. */
+.analisis-card {
+  background-color: var(--color-fondo-tarjeta);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-suave);
+  padding: var(--espacio-md);
+  margin-bottom: var(--espacio-md);
+}
+
+.analisis-header {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-sm);
+  margin-bottom: var(--espacio-sm);
+}
+
+/* El circulo con el numero de pregunta (1, 2, 3...) */
+.analisis-numero {
+  flex-shrink: 0; /* evita que el circulo se achique si la pregunta es larga */
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-secundario);
+  color: #FFFFFF;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.analisis-header h3 {
+  font-size: 1.05rem;
+}
+
+/* KPIs mas chicos cuando van DENTRO de una tarjeta de analisis
+   (los generales de .kpi-card se ven grandes; aqui los achicamos un poco) */
+.kpi-grid-compacta {
+  margin-bottom: var(--espacio-sm);
+}
+
+.kpi-grid-compacta .kpi-valor {
+  font-size: 1.3rem;
+}
+
+.analisis-imagen {
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  margin-bottom: var(--espacio-sm);
+}
+
+.analisis-respuesta {
+  color: var(--color-texto-secundario);
+  font-size: 14.5px;
+  margin-bottom: var(--espacio-sm);
+}
+
+.analisis-tabla-titulo {
+  font-size: 0.95rem;
+  margin-bottom: var(--espacio-xs);
+}
+
+/* Nota destacada al final de una tarjeta (supuesto o recomendacion) */
+.analisis-nota {
+  background-color: #FFF9E5;
+  border-left: 4px solid var(--color-advertencia);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13.5px;
+  color: #6B5A00;
+}
+
+
+/* ================================================================
+   COMPONENTE: badge flotante ("Presentado por...")
+   ================================================================
+   Pastilla fija en la esquina inferior derecha, independiente del
+   sidebar. Usa position:fixed para que se quede en el mismo lugar
+   aunque el usuario haga scroll. Para cambiar el texto o el link,
+   edita el <a class="floating-badge"> en index.html (debe estar
+   DENTRO de <body>, cerca del inicio -- nunca despues de </html>). */
+.floating-badge {
+  position: fixed;
+  bottom: 24px;   /* separacion desde abajo */
+  right: 24px;    /* separacion desde la derecha */
+  z-index: 9999;  /* siempre encima de todo lo demas */
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background-color: #000000;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 50px; /* forma de pildora */
+  text-decoration: none;
+  font-family: var(--fuente-principal);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: var(--sombra-media);
+  transition: transform 0.2s ease, padding 0.2s ease;
+  max-width: calc(100vw - 48px); /* nunca se sale de la pantalla en moviles muy angostos */
+}
+
+/* Efecto al pasar el mouse (solo aplica en escritorio, donde si hay "hover" real) */
+.floating-badge:hover {
+  transform: translateY(-3px);
+}
+
+.floating-badge-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* En escritorio se ve el texto completo por defecto */
+.floating-badge-text {
+  white-space: nowrap;
+}
+
+/* --- Pie de pagina --- */
+.page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--espacio-sm);
+  color: var(--color-texto-secundario);
+  font-size: 13.5px;
+  padding-top: var(--espacio-md);
+}
+
+.footer-links {
+  display: flex;
+  gap: var(--espacio-md);
+}
+
+.footer-links a {
+  color: var(--color-secundario);
+  font-weight: 600;
+}
+
+
+/* ================================================================
+   5. RESPONSIVE
+   ================================================================
+   Reglas que se aplican solo cuando la pantalla es angosta (celular/tablet).
+   Todo lo de arriba es el comportamiento "por defecto" (escritorio). */
+@media (max-width: 860px) {
+
+  /* El sidebar se oculta fuera de la pantalla por defecto en movil... */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: var(--sombra-media);
+  }
+
+  /* ...y se muestra cuando el JavaScript le agrega la clase "sidebar-abierto" */
+  .sidebar.sidebar-abierto {
+    transform: translateX(0);
+  }
+
+  /* El boton hamburguesa solo se ve en movil */
+  .menu-toggle {
+    display: block;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 200;
+    background-color: var(--color-fondo-tarjeta);
+    border: 1px solid var(--color-borde);
+    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  /* El contenido ya no necesita dejar espacio para el sidebar (esta oculto) */
+  .main-content {
+    margin-left: 0;
+    padding: 80px var(--espacio-sm) var(--espacio-lg);
+  }
+
+  .hero-section h1 {
+    font-size: 1.6rem;
+  }
+
+  /* --- Badge flotante en movil ---
+     En pantallas angostas ocultamos el texto y dejamos solo el
+     emoji, para que la pastilla no ocupe espacio innecesario ni
+     tape contenido con el que el usuario esta interactuando.
+     Ademas la acercamos un poco mas a la esquina (16px en vez de
+     24px) porque hay menos espacio disponible. */
+  .floating-badge {
+    bottom: 16px;
+    right: 16px;
+    padding: 12px 14px; /* se vuelve circular al quitar el texto */
+  }
+
+  .floating-badge-text {
+    display: none;
+  }
+
+  .floating-badge-icon {
+    font-size: 20px;
+  }
+}
